@@ -23,9 +23,14 @@ initializeMouseControl(rotation);
 updateCameraPositionWithCollision();
 
 // Загружаем модели
-let room, monitor;
+let roomOut, roomIn, monitor;
 loadModel("models/inRoom.gltf", [0, 0, 0], scene).then((model) => {
-    room = model;
+    roomIn = model;
+    onLoadingComplete();
+});
+
+loadModel("models/outRoom.gltf", [0, 0, 0], scene).then((model) => {
+    roomOut = model;
     onLoadingComplete();
 });
 
