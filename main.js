@@ -2,7 +2,6 @@ import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module
 import { scene, camera, renderer } from "./sceneSetup.js";
 import {initializeMouseControl, updateCameraPositionWithCollision} from "./controls.js";
 import { loadModel } from "./models.js";
-import { initializeAgora } from "./videoSetup.js";
 
 const loadingScreen = document.getElementById("loading-screen");
 let loadedObjects = 0;
@@ -54,14 +53,18 @@ function updateMonitorTexture(videoElement) {
 document.getElementById("video-agora").addEventListener("click", async () => {
     loadingScreen.classList.add("hidden");
 
-    const videoElement = await initializeAgora(
-        "d31faec490be4c68a3d3c659585719fe", // Ваш App ID
-        "main", // Канал
-        sessionStorage.getItem("uid") || String(Math.floor(Math.random() * 10000))
-    );
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
 
-    updateMonitorTexture(videoElement);
-    document.getElementById("phone-container").style.display = "none";
+        const videoElement = document.createElement("video");
+        videoElement.srcObject = stream;
+        await videoElement.play();
+        updateMonitorTexture(videoElement);
+
+        document.getElementById("phone-container").style.display = "none";
+    } catch (error) {
+        console.error("Не удалось получить доступ к камере:", error);
+    }
 });
 
 document.getElementById("video-regular").addEventListener("click", () => {
